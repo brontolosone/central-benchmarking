@@ -1,0 +1,10 @@
+[Unit]
+Description = benchbonanza timer (%i): sync git repos
+
+[Timer]
+OnUnitInactiveSec = 1m
+# So that after a reboot the unit becomes activated and subsequently deactivated, so that the above timer can trigger.
+OnBootSec = 1m
+
+[Install]
+WantedBy=timers.target

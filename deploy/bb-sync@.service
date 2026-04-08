@@ -1,0 +1,36 @@
+[Unit]
+Description = benchbonanza (%i): sync git repos
+
+[Service]
+Type = oneshot
+SyslogIdentifier = bb-sync
+
+ExecStart = /usr/bin/env bb-sync "${STATE_DIRECTORY}"
+
+
+EnvironmentFile = /etc/benchbonanza/%i/env.env
+
+User = benchbonanza-%i
+Group = benchbonanza-%i
+UMask = 0027
+
+
+TimeoutStartSec = 300
+
+
+
+
+RestrictAddressFamilies = AF_UNIX AF_INET AF_INET6
+ProtectHome = true
+ProtectSystem = strict
+PrivateTmp = true
+ProtectProc = invisible
+
+StateDirectory = benchbonanza/%i
+StateDirectoryMode = 0750
+CacheDirectory = benchbonanza/%i
+CacheDirectoryMode = 0750
+RuntimeDirectory = benchbonanza-sync/%i
+RuntimeDirectoryMode = 0750
+ConfigurationDirectory = benchbonanza/%i
+ConfigurationDirectoryMode = 0750

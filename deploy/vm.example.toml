@@ -1,0 +1,9 @@
+[vm]
+kernel_bzImage = "../bzImage"  # either absolute, or relative to the workdir
+virtiofsd_socket = "/run/virtiofsd/my-vm.sock"  # socket on which virtiofsd serves the VM root filesystem
+hugepagesize = 0  # Use hugepages for guest memory. See /sys/kernel/mm/hugepages/**
+disk_size = 4  # in GB, the size of the disk image attached to the VM (not the rootfs)
+
+[vm_available]
+"waw.v0.c1.m512" = {cpucnt=1, memsize=512}
+"waw.v0.c4.m2048" = {cpucnt=4, memsize=2048}

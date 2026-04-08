@@ -1,0 +1,37 @@
+[Unit]
+Description = benchbonanza (%i): run benchmark
+After = bb-sync@%i.service
+
+[Service]
+Type = oneshot
+SyslogIdentifier = bb-run-bench
+ExecStartPre = /usr/bin/mkdir ${CACHE_DIRECTORY}/${INVOCATION_ID}
+ExecStart = /usr/bin/env bb-run-bench
+ExecStopPost = /usr/bin/rm -rf ${CACHE_DIRECTORY}/${INVOCATION_ID}
+
+EnvironmentFile = /etc/benchbonanza/%i/env.env
+
+User = benchbonanza-%i
+Group = benchbonanza-%i
+UMask = 0027
+SupplementaryGroups = kvm
+
+TimeoutStartSec = 1300
+LimitMEMLOCK=4G:5G
+IOSchedulingClass = realtime
+IOSchedulingPriority = 0
+
+RestrictAddressFamilies = AF_UNIX AF_VSOCK
+ProtectHome = true
+ProtectSystem = strict
+PrivateTmp = true
+ProtectProc = invisible
+
+StateDirectory = benchbonanza/%i
+StateDirectoryMode = 0750
+CacheDirectory = benchbonanza/%i
+CacheDirectoryMode = 0750
+RuntimeDirectory = benchbonanza/%i
+RuntimeDirectoryMode = 0750
+ConfigurationDirectory = benchbonanza/%i
+ConfigurationDirectoryMode = 0750

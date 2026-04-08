@@ -1,0 +1,32 @@
+[project]
+name = "benchbonanza"
+dynamic = ["version"]
+description = "Continuous benchmarking infrastructure"
+requires-python = ">=3.14"
+dependencies = [
+    "varlink ~= 31.0.0",
+    "jsonschema ~= 4.26.0",
+    "rfc3339-validator ~= 0.1.4",
+    "psycopg ~= 3.3.3",
+    "sparse-file == 0.0.2",
+]
+
+[project.readme]
+file = "README.md"
+content-type = "text/markdown"
+
+[project.scripts]
+bb-validate = "benchbonanza.lib.validate:main"
+bb-run-bench = "benchbonanza.run_bench:main"
+bb-bench = "benchbonanza.bench:main"
+bb-sync = "benchbonanza.sync:main"
+bb-perflogger = "benchbonanza.aux.perflogger:main"
+bb-postmortem = "benchbonanza.aux.postmortem:main"
+bb-sparseify = "benchbonanza.lib.sparseify:main"
+
+[build-system]
+requires = ["hatchling", "uv-dynamic-versioning"]
+build-backend = "hatchling.build"
+
+[tool.hatch.version]
+source = "uv-dynamic-versioning"

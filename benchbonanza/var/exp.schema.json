@@ -1,0 +1,261 @@
+{
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "type": "object",
+    "required": [
+        "meta"
+    ],
+    "properties": {
+        "meta": {
+            "type": "object",
+            "required": [
+                "machines"
+            ],
+            "properties": {
+                "machines": {
+                    "type": "array",
+                    "minItems": 1,
+                    "items": {
+                        "$ref": "#/$defs/ltree"
+                    }
+                },
+                "timeout": {
+                    "type": "integer",
+                    "minimum": 0
+                },
+                "iothrottle": {
+                    "$ref": "#/$defs/IOThrottle"
+                }
+            },
+            "additionalProperties": false
+        },
+        "setup": {
+            "type": "array",
+            "items": {
+                "$ref": "#/$defs/serviceExecEntry"
+            }
+        },
+        "trackedservice": {
+            "type": "array",
+            "items": {
+                "$ref": "#/$defs/serviceExecEntry"
+            }
+        },
+        "testload": {
+            "type": "array",
+            "items": {
+                "$ref": "#/$defs/serviceTestloadEntry"
+            }
+        }
+    },
+    "$defs": {
+        "IOThrottle": {
+          "type": "object",
+          "additionalProperties": false,
+    
+          "properties": {
+            "iops": { "type": "integer", "minimum": 1 },
+            "iops_rd": { "type": "integer", "minimum": 1 },
+            "iops_wr": { "type": "integer", "minimum": 1 },
+            "bps": { "type": "integer", "minimum": 1 },
+            "bps_rd": { "type": "integer", "minimum": 1 },
+            "bps_wr": { "type": "integer", "minimum": 1 },
+    
+            "iops_max": { "type": "integer", "minimum": 1 },
+            "iops_max_length": { "type": "integer", "minimum": 1 },
+            "iops_rd_max": { "type": "integer", "minimum": 1 },
+            "iops_rd_max_length": { "type": "integer", "minimum": 1 },
+            "iops_wr_max": { "type": "integer", "minimum": 1 },
+            "iops_wr_max_length": { "type": "integer", "minimum": 1 },
+    
+            "bps_max": { "type": "integer", "minimum": 1 },
+            "bps_max_length": { "type": "integer", "minimum": 1 },
+            "bps_rd_max": { "type": "integer", "minimum": 1 },
+            "bps_rd_max_length": { "type": "integer", "minimum": 1 },
+            "bps_wr_max": { "type": "integer", "minimum": 1 },
+            "bps_wr_max_length": { "type": "integer", "minimum": 1 }
+          },
+    
+          "anyOf": [
+            { "required": ["iops"] },
+            { "required": ["iops_rd"] },
+            { "required": ["iops_wr"] },
+            { "required": ["bps"] },
+            { "required": ["bps_rd"] },
+            { "required": ["bps_wr"] }
+          ],
+    
+          "allOf": [
+            {
+              "not": { "required": ["iops", "iops_rd"] }
+            },
+            {
+              "not": { "required": ["iops", "iops_wr"] }
+            },
+            {
+              "not": { "required": ["bps", "bps_rd"] }
+            },
+            {
+              "not": { "required": ["bps", "bps_wr"] }
+            }
+          ],
+    
+          "dependentRequired": {
+            "iops_max": ["iops"],
+            "iops_max_length": ["iops_max"],
+            "iops_rd_max": ["iops_rd"],
+            "iops_rd_max_length": ["iops_rd_max"],
+            "iops_wr_max": ["iops_wr"],
+            "iops_wr_max_length": ["iops_wr_max"],
+    
+            "bps_max": ["bps"],
+            "bps_max_length": ["bps_max"],
+            "bps_rd_max": ["bps_rd"],
+            "bps_rd_max_length": ["bps_rd_max"],
+            "bps_wr_max": ["bps_wr"],
+            "bps_wr_max_length": ["bps_wr_max"]
+          }
+        },
+        "execValue": {
+            "type": [
+                "string",
+                "integer",
+                "number"
+            ]
+        },
+        "execArray": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+                "$ref": "#/$defs/execValue"
+            }
+        },
+        "unixPath": {
+            "type": "string",
+            "pattern": "^/.{,254}"
+        },
+        "uidgid": {
+            "oneOf": [
+                {
+                    "type": "integer",
+                    "minimum": 0
+                },
+                {
+                    "type": "string",
+                    "minLength": 1
+                }
+            ]
+        },
+        "envVar": {
+            "type": "object",
+            "patternProperties": {
+                "^[a-zA-Z_-]+$": {
+                    "type": [
+                        "string",
+                        "integer",
+                        "number"
+                    ]
+                }
+            },
+            "additionalProperties": false,
+            "minProperties": 1,
+            "maxProperties": 1
+        },
+        "command": {
+            "type": "object",
+            "required": [
+                "exec"
+            ],
+            "properties": {
+                "exec": {
+                    "oneOf": [
+                        {
+                            "type": "string"
+                        },
+                        {
+                            "$ref": "#/$defs/execArray"
+                        }
+                    ]
+                },
+                "workdir": {
+                    "$ref": "#/$defs/unixPath"
+                },
+                "uid": {
+                    "$ref": "#/$defs/uidgid"
+                },
+                "gid": {
+                    "$ref": "#/$defs/uidgid"
+                },
+                "env": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/$defs/envVar"
+                    }
+                }
+            },
+            "additionalProperties": false
+        },
+        "ltree": {
+            "type": "string",
+            "pattern": "^([a-zA-Z0-9_-]+)(\\.[a-zA-Z0-9_-]+)*$"
+        },
+        "parser": {
+            "type": "string",
+            "enum": [
+                "hey-summary-v1"
+            ]
+        },
+        "parserConfig": {
+            "type": "object",
+            "required": [
+                "parser"
+            ],
+            "properties": {
+                "parser": {
+                    "$ref": "#/$defs/parser"
+                }
+            },
+            "additionalProperties": false
+        },
+        "serviceExecEntry": {
+            "type": "object",
+            "required": [
+                "cmd",
+                "name"
+            ],
+            "properties": {
+                "cmd": {
+                    "$ref": "#/$defs/command"
+                },
+                "name": {
+                    "type": "string",
+                    "pattern": "^[a-zA-Z_-]+$"
+                }
+            },
+            "additionalProperties": false
+        },
+        "serviceTestloadEntry": {
+            "type": "object",
+            "required": [
+                "cmd",
+                "name"
+            ],
+            "properties": {
+                "cmd": {
+                    "$ref": "#/$defs/command"
+                },
+                "name": {
+                    "type": "string",
+                    "pattern": "^[a-zA-Z_-]+$"
+                },
+                "stdout": {
+                    "$ref": "#/$defs/parserConfig"
+                },
+                "stderr": {
+                    "$ref": "#/$defs/parserConfig"
+                }
+            },
+            "additionalProperties": false
+        }
+    },
+    "additionalProperties": false
+}
